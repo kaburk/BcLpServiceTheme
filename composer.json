@@ -1,0 +1,12 @@
+{
+    "name": "kaburk/bc-lp-service-theme",
+    "description": "Service introduction landing page theme for baserCMS5",
+    "homepage": "https://blog.kaburk.com/",
+    "type": "cakephp-plugin",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "BcLpServiceTheme\\": "src/"
+        }
+    }
+}

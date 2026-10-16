@@ -1,0 +1,389 @@
+@charset "UTF-8";
+/* ==========================================================================
+   BcLpServiceTheme : baserCMS5 サービス紹介 LP テーマ
+
+   本文（BurgerEditor）のスタイル
+   公開画面と BurgerEditor の編集エリアの両方で読み込まれる（style.css は編集エリアでは読まれない）
+
+   ■ 独自class一覧（ブロック設定の「独自class設定」に入力する）
+   | 独自class          | 使うブロック                       | 中身の書き方
+   |--------------------|------------------------------------|---------------------------------------------
+   | sv-blk--hero       | 画像右寄せ（テキスト回り込み無し） | テキスト：段落（英字のサービス名）→ 段落（サービス名）→ 見出し1（キャッチ）→ 段落（紹介文）
+   |                    |                                    | → 箇条書き（実績。各項目の先頭を太字にして「<太字>導入企業</太字>1,200社」）
+   |                    |                                    | → 最後の段落にリンク（1つめ＝メインのボタン、2つめ＝白いボタン）
+   |                    |                                    | 画像を空にすると、サービスの画面のイメージが描かれる
+   | sv-blk--logos      | 画像5列                            | 導入企業のロゴ（直前に sv-blk--lead を置くと説明の一文になる）
+   | sv-blk--section    | 大見出し                           | セクションの見出し（中央寄せ）。「ID設定」に英字（例 features）を入れると、
+   |                    |                                    | ヘッダーのナビに載り、見出しの上に英字のラベル（FEATURES）が出る
+   | sv-blk--nonav      | 大見出し（sv-blk--section と併用） | ID を入れても、ヘッダーのナビには載せない（英字のラベルだけ出す）
+   | sv-blk--lead       | 1カラムテキスト                    | 見出しの下のリード文（中央寄せ）
+   | sv-blk--problems   | 1カラムテキスト                    | 箇条書き。1項目＝1枚のカード（アイコンは並び順：電話・カレンダー・人・バツ）
+   | sv-blk--features   | 画像3列＋テキスト                  | テキスト：見出し3 → 段落。「POINT 01」は自動
+   | sv-blk--functions  | 1カラムテキスト                    | 箇条書き。各項目の先頭を太字（機能名）にし、改行して説明を書く
+   |                    |                                    | アイコンは並び順（カレンダー・メール・人・盾・グラフ・矢印）
+   | sv-blk--plans      | 画像3列＋テキスト                  | 画像は使わない（表示しない）。テキスト：段落（おすすめ。省略可）→ 見出し3（プラン名）
+   |                    |                                    | → 段落（月額 3,000円）→ 段落（対象）→ 箇条書き（内容）→ 最後の段落にリンク（ボタン）
+   |                    |                                    | 最初の段落に「おすすめ」などを書いたプランは、枠が太くなりボタンがメインの色になる
+   | sv-blk--compare    | 1カラムテキスト                    | 表（CKEditor の表。1行目を見出しの行、1列目を見出しの列にする）。先頭の段落が表の題になる
+   | sv-blk--note       | 1カラムテキスト                    | 箇条書き。小さな注記
+   | sv-blk--cases      | 画像3列＋テキスト                  | テキスト：段落（会社名）→ 段落（業種のタグ）→ 見出し3 → 段落
+   | sv-blk--steps      | 1カラムテキスト                    | 番号付きリスト。各項目の先頭を太字（手順名）にし、改行して説明を書く。「STEP 1」は自動
+   | sv-blk--faq        | 1カラムテキスト                    | 見出し3＝質問、直後の段落＝回答。質問ごとに開閉できる（最初はすべて閉じる）
+   | sv-blk--cta        | 1カラムテキスト                    | 見出し2 → 段落 → 最後の段落にリンク（1つめ＝白いボタン、2つめ＝枠線のボタン）。背景色「ピンク」と組み合わせる
+   | sv-blk--center     | 任意                               | 中央寄せ
+
+   ■ ブロック設定の「背景色」（テーマ色に置き換えている）
+   - ブルー：メイン色の薄い背景／グレー：サブ色の薄い背景（上下に線）／ピンク：サブ色の濃い背景（白い文字）
+   - 同じ背景色のブロックを続けると、1つのセクションとしてつながって見える
+
+   ■ 複数の場所に書かれている値を変えるとき
+   - 料金：料金プラン（sv-blk--plans）／プランの比較（sv-blk--compare）／よくある質問
+   - サービス名・会社名：ヒーロー／フッター（ウィジェット）／メールフォームの差出人名・件名／テーマ設定のロゴの代替テキスト
+   - 無料トライアルの日数：料金の注記（sv-blk--note）／導入の流れ／よくある質問
+   ========================================================================== */
+
+/* ---- Tokens（style.css と同じ値。編集エリア用に再定義） ---- */
+:root {
+	--sv-main: var(--theme-main, #1f6feb);
+	--sv-sub: var(--theme-sub, #0b2545);
+	--sv-link: var(--theme-link, #1f6feb);
+	--sv-hover: var(--theme-hover, #154ab0);
+	--sv-main-50: color-mix(in srgb, var(--sv-main) 6%, #fff);
+	--sv-main-100: color-mix(in srgb, var(--sv-main) 12%, #fff);
+	--sv-main-200: color-mix(in srgb, var(--sv-main) 28%, #fff);
+	--sv-main-dark: color-mix(in srgb, var(--sv-main) 82%, #000);
+	--sv-sub-50: color-mix(in srgb, var(--sv-sub) 4%, #fff);
+	--sv-sub-100: color-mix(in srgb, var(--sv-sub) 10%, #fff);
+	--sv-line: color-mix(in srgb, var(--sv-sub) 16%, #fff);
+	--sv-main-ink: color-mix(in srgb, var(--sv-main) 85%, #000);
+	--sv-sub-ink: var(--sv-sub);
+	--sv-link-ink: color-mix(in srgb, var(--sv-link) 85%, #000);
+	--sv-hover-ink: color-mix(in srgb, var(--sv-hover) 85%, #000);
+	--sv-on-main: #fff;
+	--sv-on-sub: #fff;
+	--sv-text: #1f2937;
+	--sv-text-2: #4b5563;
+	--sv-font: "Roboto", "Noto Sans JP", system-ui, sans-serif;
+	--sv-font-head: "Noto Sans JP", system-ui, sans-serif;
+	--sv-font-en: "Roboto", "Noto Sans JP", sans-serif;
+
+	/* アイコン（mask-image 用） */
+	--sv-ic-phone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z'/%3E%3C/svg%3E");
+	--sv-ic-cal-x: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M16 3v4M8 3v4M3 10h18M9.5 13.5l5 5M14.5 13.5l-5 5'/%3E%3C/svg%3E");
+	--sv-ic-users: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='8' r='3.5'/%3E%3Cpath d='M2.5 20a6.5 6.5 0 0 1 13 0'/%3E%3Ccircle cx='17' cy='9' r='2.5'/%3E%3Cpath d='M16.5 14.5a5 5 0 0 1 5 5'/%3E%3C/svg%3E");
+	--sv-ic-x: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M9 9l6 6M15 9l-6 6'/%3E%3C/svg%3E");
+	--sv-ic-cal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M16 3v4M8 3v4M3 10h18M7.5 14h2M11 14h2M14.5 14h2M7.5 17.5h2M11 17.5h2'/%3E%3C/svg%3E");
+	--sv-ic-mail: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='M3 7l9 6 9-6'/%3E%3C/svg%3E");
+	--sv-ic-user: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21a8 8 0 0 1 16 0'/%3E%3C/svg%3E");
+	--sv-ic-shield: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z'/%3E%3Cpath d='M9 12l2 2 4-4'/%3E%3C/svg%3E");
+	--sv-ic-chart: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20V4M4 20h16'/%3E%3Cpath d='M8.5 16v-4M12.5 16V8M16.5 16v-6'/%3E%3C/svg%3E");
+	--sv-ic-sync: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 12a8 8 0 0 1-14 5.3M4 12a8 8 0 0 1 14-5.3'/%3E%3Cpath d='M18 3v4h-4M6 21v-4h4'/%3E%3C/svg%3E");
+	--sv-ic-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l4 4 10-10'/%3E%3C/svg%3E");
+	--sv-ic-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+@supports (color: oklch(from red l c h)) {
+	:root {
+		--sv-main-ink: oklch(from var(--sv-main) min(l, 0.55) c h);
+		--sv-sub-ink: oklch(from var(--sv-sub) min(l, 0.40) c h);
+		--sv-link-ink: oklch(from var(--sv-link) min(l, 0.55) c h);
+		--sv-hover-ink: oklch(from var(--sv-hover) min(l, 0.45) c h);
+		--sv-on-main: oklch(from var(--sv-main) clamp(0, (0.65 - l) * 1000, 1) 0 0);
+		--sv-on-sub: oklch(from var(--sv-sub) clamp(0, (0.65 - l) * 1000, 1) 0 0);
+	}
+}
+
+/* ---- Base：ブロックを全幅にし、中身を中央の最大幅に収める ---- */
+.bge-contents {
+	--sv-content: 1072px;
+	--sv-gap: max(16px, min(24px, 4vw));
+	--sv-inline: max(var(--sv-gap), calc((100% - var(--sv-content)) / 2));
+	--sv-sec: 96px;
+	/* 背景色オプションをテーマ色に置き換える */
+	--bge-options-bgcolor-blue: var(--sv-main-50);
+	--bge-options-bgcolor-gray: var(--sv-sub-50);
+	--bge-options-bgcolor-pink: var(--sv-sub);
+	--bge-options-margin-normal: 0;
+	--bge-options-margin-small: 0;
+	--bge-options-margin-large: 0;
+	--bge-options-padding-with-border-or-bg: 0;
+	counter-reset: sv-point;
+	color: var(--sv-text);
+	font-family: var(--sv-font);
+	font-size: 16px;
+	line-height: 1.8;
+}
+.bge-contents > [data-bgb] {
+	margin: 0;
+	padding: 0 var(--sv-inline) 32px;
+}
+.bge-contents > .bgb-opt--mb-large { padding-bottom: 64px; }
+.bge-contents > .bgb-opt--mb-small { padding-bottom: 16px; }
+.bge-contents > .bgb-opt--mb-none { padding-bottom: 0; }
+/* 背景色のブロックが続くときは1つのセクションに見せる。最後のブロックだけ下に余白を取る */
+.bge-contents > .bgb-opt--bg-blue:not(:has(+ .bgb-opt--bg-blue)),
+.bge-contents > .bgb-opt--bg-gray:not(:has(+ .bgb-opt--bg-gray)),
+.bge-contents > .bgb-opt--bg-pink:not(:has(+ .bgb-opt--bg-pink)) { padding-bottom: var(--sv-sec); }
+/* グレー（サブの薄い背景）は、ひと続きの上下に線を引く */
+.bge-contents > .bgb-opt--bg-gray:not(.bgb-opt--bg-gray + .bgb-opt--bg-gray) { border-top: 1px solid var(--sv-line); }
+.bge-contents > .bgb-opt--bg-gray:not(:has(+ .bgb-opt--bg-gray)) { border-bottom: 1px solid var(--sv-line); }
+.bge-contents > .bgb-opt--bg-pink { color: var(--sv-on-sub); }
+.bge-contents > .bgb-opt--bg-pink a { color: inherit; }
+/* 背景色のないブロックで、次に背景色ブロックが来るときは余白を広げる */
+.bge-contents > [data-bgb]:not([class*="bgb-opt--bg-"]):has(+ [class*="bgb-opt--bg-"]) { padding-bottom: var(--sv-sec); }
+.bge-contents > :last-child { padding-bottom: var(--sv-sec); }
+
+/* 本文のタイポグラフィ */
+.bge-contents :is(h1, h2, h3, .bge-title-h2) { word-break: auto-phrase; }
+.bge-contents .bge-ckeditor > :first-child { margin-top: 0; }
+.bge-contents .bge-ckeditor > :last-child { margin-bottom: 0; }
+.bge-contents .bge-ckeditor :is(h1, h2, h3, h4) { color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-weight: 700; line-height: 1.45; }
+.bge-contents .bge-ckeditor a { color: var(--sv-link-ink); text-underline-offset: 3px; }
+.bge-contents .bge-ckeditor a:hover { color: var(--sv-hover-ink); }
+.bge-contents .bgb-opt--bg-pink .bge-ckeditor :is(h1, h2, h3, h4) { color: inherit; }
+.bge-contents .bge-title-h2 {
+	margin: 0; padding: 0; border: 0; background: none;
+	color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-size: 32px; font-weight: 700; line-height: 1.45;
+}
+.bge-contents .bge-title-h2::before,
+.bge-contents .bge-title-h2::after { content: none; }
+.bge-contents .bgt-box__caption:empty { display: none; }
+.bge-contents .bge-type-table :is(th, td) { inline-size: auto; }
+/* BurgerEditor 標準のボタンブロック */
+.bge-contents .bgt-btn-container { text-align: center; }
+.bge-contents .bgt-btn,
+.bge-contents a.bgt-btn {
+	display: inline-flex; align-items: center; justify-content: center; min-width: 0; min-height: 52px; padding: 12px 28px;
+	border: 2px solid var(--sv-main); border-radius: 4px; background: var(--sv-main); color: var(--sv-on-main);
+	font-family: var(--sv-font-head); font-size: 16px; font-weight: 700; text-decoration: none;
+}
+.bge-contents .bgt-btn:hover { border-color: var(--sv-main-dark); background: var(--sv-main-dark); color: var(--sv-on-main); }
+.bge-contents .bgt-btn::before,
+.bge-contents .bgt-btn::after { display: none; }
+
+/* ボタン（リンクに当てる共通の見た目） */
+:is(.sv-blk--hero, .sv-blk--cta) .bge-ckeditor > p:last-child a,
+.sv-blk--plans .bge-ckeditor > p:last-child a {
+	display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+	min-height: 52px; padding: 12px 28px; border: 2px solid var(--sv-main); border-radius: 4px;
+	background: var(--sv-main); color: var(--sv-on-main);
+	font-family: var(--sv-font-head); font-size: 16px; font-weight: 700; line-height: 1.4; text-align: center; text-decoration: none;
+	transition: background-color .2s, color .2s, border-color .2s;
+}
+:is(.sv-blk--hero, .sv-blk--cta) .bge-ckeditor > p:last-child a:hover,
+.sv-blk--plans .bge-ckeditor > p:last-child a:hover { border-color: var(--sv-main-dark); background: var(--sv-main-dark); color: var(--sv-on-main); }
+/* 白いボタン（枠線）：ヒーローの2つめ、おすすめ以外のプラン */
+.sv-blk--hero .bge-ckeditor > p:last-child a:nth-of-type(2),
+.sv-blk--plans .bgt-grid:not(:has(.bge-ckeditor > p:first-child + h3)) .bge-ckeditor > p:last-child a { border-color: var(--sv-sub-ink); background: #fff; color: var(--sv-sub-ink); }
+.sv-blk--hero .bge-ckeditor > p:last-child a:nth-of-type(2):hover,
+.sv-blk--plans .bgt-grid:not(:has(.bge-ckeditor > p:first-child + h3)) .bge-ckeditor > p:last-child a:hover { border-color: var(--sv-sub-ink); background: var(--sv-sub-100); color: var(--sv-sub-ink); }
+
+/* ---- 空の画像（すべての画像ブロック共通） ----
+   編集エリアでは、画像を選べるように点線の枠と案内を出す。公開画面では style.css でグレーの枠（仮の写真）にする。
+   「選択画像を削除する」で消した場合は data-bge-empty が "0" のまま img の src だけが空になるので、両方を空として扱う */
+.bge-contents .bgt-image:is([data-bge-empty="1"], :has(img[src=""])) {
+	position: relative; display: flex; align-items: center; justify-content: center; min-height: 120px; padding: 16px;
+	border: 2px dashed #8a8a8a; border-radius: 4px; background: rgba(255, 255, 255, .6); text-align: center;
+}
+.bge-contents .bgt-image:is([data-bge-empty="1"], :has(img[src=""]))::before { content: "画像（ダブルクリックで選択）"; color: #4d4d4d; font-size: 15px; font-weight: 700; }
+.bge-contents .bgt-image:has(img[src=""]) .bgt-image__link { display: none; }
+.bge-contents .bgt-image { margin: 0; }
+.bge-contents .bgt-image img { display: block; width: 100%; border-radius: 4px; }
+
+/* ---- セクション見出し（sv-blk--section）：英字ラベル＋見出し（中央寄せ） ---- */
+.bge-contents > .sv-blk--section { padding-top: var(--sv-sec); padding-bottom: 48px; text-align: center; }
+.bge-contents > .sv-blk--section:has(+ .sv-blk--lead) { padding-bottom: 12px; }
+.bge-contents > [data-bgb]:not([class*="bgb-opt--bg-"]) + .sv-blk--section:not([class*="bgb-opt--bg-"]) { padding-top: 64px; }
+.sv-blk--section .bgt-title-h2-container { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.sv-blk--section .bgt-title-h2-container[data-sv-label]::before {
+	content: attr(data-sv-label);
+	color: var(--sv-main-ink); font-family: var(--sv-font-en); font-size: 14px; font-weight: 700; letter-spacing: .14em;
+}
+.bge-contents > .sv-blk--section.bgb-opt--bg-pink .bge-title-h2,
+.bge-contents > .sv-blk--section.bgb-opt--bg-pink .bgt-title-h2-container::before { color: inherit; }
+
+/* ---- リード文（sv-blk--lead）・中央寄せ・注記 ---- */
+.bge-contents > .sv-blk--lead { padding-bottom: 48px; text-align: center; }
+.sv-blk--lead .bge-ckeditor { max-width: 680px; margin: 0 auto; color: var(--sv-text-2); }
+.bge-contents > .sv-blk--lead:has(+ .sv-blk--logos) { padding-top: 48px; padding-bottom: 24px; }
+.sv-blk--lead:has(+ .sv-blk--logos) .bge-ckeditor { color: var(--sv-text-2); font-weight: 500; }
+.bge-contents > .sv-blk--center { text-align: center; }
+.sv-blk--note .bge-ckeditor ul { margin: 0; padding-left: 1.2em; color: var(--sv-text-2); }
+
+/* ---- ヒーロー（sv-blk--hero） ---- */
+.bge-contents > .sv-blk--hero {
+	display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 56px; align-items: center;
+	padding-top: 80px; padding-bottom: 88px; border-bottom: 1px solid var(--sv-line); background: var(--sv-main-50);
+}
+.bge-contents > .sv-blk--hero > .bgt-grid { width: auto; max-width: none; float: none; margin: 0; padding: 0; }
+.sv-blk--hero .bge-ckeditor { display: flex; flex-direction: column; gap: 12px; }
+.sv-blk--hero .bge-ckeditor > * { margin: 0; }
+.sv-blk--hero .bge-ckeditor > p:first-child { margin-bottom: 12px; color: var(--sv-main-ink); font-family: var(--sv-font-en); font-size: 14px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.sv-blk--hero .bge-ckeditor > p:first-child + p { color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-size: 20px; font-weight: 700; }
+.sv-blk--hero .bge-ckeditor h1 { font-size: 40px; line-height: 1.4; }
+.sv-blk--hero .bge-ckeditor h1 + p { margin-top: 12px; color: var(--sv-text-2); font-size: 17px; }
+/* 実績 */
+.sv-blk--hero .bge-ckeditor > ul { display: flex; flex-wrap: wrap; margin-top: 12px; padding: 0; list-style: none; }
+.sv-blk--hero .bge-ckeditor > ul li { display: block; margin-right: 24px; padding: 4px 24px 4px 0; border-right: 1px solid var(--sv-line); color: var(--sv-sub-ink); font-weight: 700; line-height: 1.5; }
+.sv-blk--hero .bge-ckeditor > ul li:last-child { margin-right: 0; border-right: 0; }
+.sv-blk--hero .bge-ckeditor > ul li strong { display: block; color: var(--sv-text-2); font-size: 14px; font-weight: 400; }
+.sv-blk--hero .bge-ckeditor > ul li .sv-num { font-family: var(--sv-font-en); font-size: 36px; line-height: 1.2; }
+.sv-blk--hero .bge-ckeditor > p:last-child { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.sv-blk--hero .bgt-image img { aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid var(--sv-line); border-radius: 6px; }
+
+/* ---- 導入企業のロゴ（sv-blk--logos） ---- */
+.bge-contents > .sv-blk--logos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; padding-bottom: 48px; border-bottom: 1px solid var(--sv-line); }
+.sv-blk--logos > .bgt-grid { width: auto; max-width: none; float: none; margin: 0; padding: 0; }
+.sv-blk--logos .bgt-image img { height: 64px; object-fit: contain; }
+
+/* ---- カードの共通 ---- */
+.sv-blk--problems .bge-ckeditor li,
+.sv-blk--functions .bge-ckeditor li,
+.sv-blk--steps .bge-ckeditor li { position: relative; margin: 0; padding: 28px; border: 1px solid var(--sv-line); border-radius: 4px; background: #fff; }
+/* アイコンの箱（::before）とアイコン（::after） */
+.sv-blk--problems .bge-ckeditor li::before,
+.sv-blk--functions .bge-ckeditor li::before { content: ""; position: absolute; top: 28px; left: 28px; width: 52px; height: 52px; border-radius: 4px; background: var(--sv-main-100); }
+.sv-blk--problems .bge-ckeditor li::after,
+.sv-blk--functions .bge-ckeditor li::after { content: ""; position: absolute; top: 41px; left: 41px; width: 26px; height: 26px; background: var(--sv-sub-ink); -webkit-mask: var(--sv-ic-cal) center / contain no-repeat; mask: var(--sv-ic-cal) center / contain no-repeat; }
+
+/* ---- お悩み（sv-blk--problems）：アイコン＋短文を横に ---- */
+.sv-blk--problems .bge-ckeditor ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
+.sv-blk--problems .bge-ckeditor li { display: flex; align-items: center; min-height: 110px; padding-left: 96px; color: var(--sv-sub-ink); font-weight: 500; }
+.sv-blk--problems .bge-ckeditor li::before { top: 50%; margin-top: -26px; }
+.sv-blk--problems .bge-ckeditor li::after { top: 50%; margin-top: -13px; }
+.sv-blk--problems li:nth-child(4n+1)::after { -webkit-mask-image: var(--sv-ic-phone); mask-image: var(--sv-ic-phone); }
+.sv-blk--problems li:nth-child(4n+2)::after { -webkit-mask-image: var(--sv-ic-cal-x); mask-image: var(--sv-ic-cal-x); }
+.sv-blk--problems li:nth-child(4n+3)::after { -webkit-mask-image: var(--sv-ic-users); mask-image: var(--sv-ic-users); }
+.sv-blk--problems li:nth-child(4n)::after { -webkit-mask-image: var(--sv-ic-x); mask-image: var(--sv-ic-x); }
+
+/* ---- 機能（sv-blk--functions）：アイコン → 見出し → 短文 ---- */
+.sv-blk--functions .bge-ckeditor ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
+.sv-blk--functions .bge-ckeditor li { padding-top: 96px; color: var(--sv-text-2); }
+.sv-blk--functions .bge-ckeditor li strong:first-child { display: block; margin-bottom: 12px; color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-size: 19px; line-height: 1.45; }
+:is(.sv-blk--functions, .sv-blk--steps) .bge-ckeditor li strong:first-child + br { display: none; }
+.sv-blk--functions li:nth-child(6n+2)::after { -webkit-mask-image: var(--sv-ic-mail); mask-image: var(--sv-ic-mail); }
+.sv-blk--functions li:nth-child(6n+3)::after { -webkit-mask-image: var(--sv-ic-user); mask-image: var(--sv-ic-user); }
+.sv-blk--functions li:nth-child(6n+4)::after { -webkit-mask-image: var(--sv-ic-shield); mask-image: var(--sv-ic-shield); }
+.sv-blk--functions li:nth-child(6n+5)::after { -webkit-mask-image: var(--sv-ic-chart); mask-image: var(--sv-ic-chart); }
+.sv-blk--functions li:nth-child(6n)::after { -webkit-mask-image: var(--sv-ic-sync); mask-image: var(--sv-ic-sync); }
+
+/* ---- 3列のカード（特長 sv-blk--features・料金プラン sv-blk--plans・導入事例 sv-blk--cases） ---- */
+.bge-contents > :is(.sv-blk--features, .sv-blk--plans, .sv-blk--cases) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.bge-contents > .sv-blk--plans { gap: 24px; }
+:is(.sv-blk--features, .sv-blk--plans, .sv-blk--cases) > .bgt-grid { display: flex; flex-direction: column; width: auto; max-width: none; float: none; margin: 0; padding: 0; }
+:is(.sv-blk--features, .sv-blk--plans, .sv-blk--cases) > .bgt-grid > .bgt-ckeditor-container { flex: 1; display: flex; }
+:is(.sv-blk--features, .sv-blk--plans, .sv-blk--cases) .bge-ckeditor { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+:is(.sv-blk--features, .sv-blk--plans, .sv-blk--cases) .bge-ckeditor > * { margin: 0; }
+/* 特長 */
+.sv-blk--features > .bgt-grid { counter-increment: sv-point; gap: 16px; }
+.sv-blk--features .bgt-image img { aspect-ratio: 3 / 2; object-fit: cover; }
+.sv-blk--features .bge-ckeditor::before { content: "POINT " counter(sv-point, decimal-leading-zero); color: var(--sv-main-ink); font-family: var(--sv-font-en); font-size: 15px; font-weight: 700; letter-spacing: .08em; }
+.sv-blk--features .bge-ckeditor h3 { font-size: 21px; }
+.sv-blk--features .bge-ckeditor p { color: var(--sv-text-2); }
+/* 料金プラン：画像は使わない */
+.sv-blk--plans .bgt-image-container { display: none; }
+.sv-blk--plans > .bgt-grid { padding: 28px; border: 1px solid var(--sv-line); border-radius: 4px; background: #fff; }
+.sv-blk--plans > .bgt-grid:has(.bge-ckeditor > p:first-child + h3) { padding: 27px; border: 2px solid var(--sv-main); }
+.sv-blk--plans .bge-ckeditor { gap: 16px; }
+/* おすすめのバッジ（最初の段落）。バッジのないプランは、見出しの位置をそろえる */
+.sv-blk--plans .bge-ckeditor > p:first-child:has(+ h3) { align-self: flex-start; display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: 999px; background: var(--sv-main); color: var(--sv-on-main); font-size: 14px; font-weight: 700; }
+.sv-blk--plans .bge-ckeditor > h3:first-child { margin-top: 44px; }
+.sv-blk--plans .bge-ckeditor h3 { font-size: 22px; }
+.sv-blk--plans .bge-ckeditor h3 + p { color: var(--sv-sub-ink); font-weight: 700; }
+.sv-blk--plans .bge-ckeditor h3 + p .sv-num { font-family: var(--sv-font-en); font-size: 40px; line-height: 1.2; }
+.sv-blk--plans .bge-ckeditor h3 + p + p { color: var(--sv-text-2); }
+.sv-blk--plans .bge-ckeditor ul { display: flex; flex-direction: column; gap: 8px; padding: 16px 0 0; border-top: 1px solid var(--sv-line); list-style: none; }
+.sv-blk--plans .bge-ckeditor li { display: flex; gap: 8px; }
+.sv-blk--plans .bge-ckeditor li::before { content: ""; flex: none; width: 16px; height: 16px; margin-top: 5px; background: var(--sv-main-ink); -webkit-mask: var(--sv-ic-check) center / contain no-repeat; mask: var(--sv-ic-check) center / contain no-repeat; }
+.sv-blk--plans .bge-ckeditor > p:last-child { margin-top: auto; }
+.sv-blk--plans .bge-ckeditor > p:last-child a { width: 100%; }
+/* 導入事例 */
+.sv-blk--cases > .bgt-grid { overflow: hidden; border: 1px solid var(--sv-line); border-radius: 4px; background: #fff; }
+.sv-blk--cases .bgt-image img { aspect-ratio: 16 / 10; object-fit: cover; border-radius: 0; }
+.sv-blk--cases .bge-ckeditor { display: block; padding: 24px; }
+.sv-blk--cases .bge-ckeditor > p:first-child { display: inline; margin-right: 8px; color: var(--sv-sub-ink); font-weight: 700; }
+.sv-blk--cases .bge-ckeditor > p:first-child + p { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--sv-sub-100); color: var(--sv-sub-ink); font-size: 14px; }
+.sv-blk--cases .bge-ckeditor h3 { margin-top: 12px; font-size: 21px; }
+.sv-blk--cases .bge-ckeditor h3 + p { margin-top: 12px; color: var(--sv-text-2); }
+
+/* ---- プランの比較（sv-blk--compare）：CKEditor の表 ---- */
+.bge-contents > .sv-blk--compare { padding-top: 16px; }
+.sv-blk--compare .bge-ckeditor { overflow-x: auto; border: 1px solid var(--sv-line); border-radius: 4px; background: #fff; }
+.sv-blk--compare .bge-ckeditor > p:first-child { margin: 0; padding: 16px 20px; border-bottom: 1px solid var(--sv-line); color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-weight: 700; }
+.sv-blk--compare table { width: 100%; min-width: 640px; margin: 0; border: 0; border-collapse: collapse; }
+.sv-blk--compare :is(th, td) { padding: 14px 20px; border: 0; border-bottom: 1px solid var(--sv-line); text-align: center; }
+.sv-blk--compare tr:last-child :is(th, td) { border-bottom: 0; }
+.sv-blk--compare tr:first-child :is(th, td),
+.sv-blk--compare thead :is(th, td) { background: var(--sv-sub-100); color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-weight: 700; }
+.sv-blk--compare tr:not(:first-child) > :first-child { background: var(--sv-sub-50); color: var(--sv-sub-ink); font-weight: 500; text-align: left; white-space: nowrap; }
+.bge-contents > .sv-blk--note { padding-top: 0; }
+
+/* ---- 導入の流れ（sv-blk--steps） ---- */
+.sv-blk--steps .bge-ckeditor ol { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; counter-reset: sv-step; }
+.sv-blk--steps .bge-ckeditor li { counter-increment: sv-step; color: var(--sv-text-2); }
+.sv-blk--steps .bge-ckeditor li::before { content: "STEP " counter(sv-step); display: block; margin-bottom: 12px; color: var(--sv-main-ink); font-family: var(--sv-font-en); font-size: 15px; font-weight: 700; letter-spacing: .08em; }
+.sv-blk--steps .bge-ckeditor li strong:first-child { display: block; margin-bottom: 12px; color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-size: 19px; line-height: 1.45; }
+
+/* ---- よくある質問（sv-blk--faq） ---- */
+/* 幅を狭くする（--sv-inline は .bge-contents で計算済みなので、左右の余白を直接指定する） */
+.bge-contents > .sv-blk--faq { padding-inline: max(var(--sv-gap), calc((100% - 832px) / 2)); }
+.sv-blk--faq .bge-ckeditor { display: flex; flex-direction: column; gap: 12px; }
+.sv-blk--faq .bge-ckeditor > * { margin: 0; }
+.sv-blk--faq .bge-ckeditor h3 { position: relative; padding: 20px 24px 20px 64px; border: 1px solid var(--sv-line); border-bottom: 0; border-radius: 4px 4px 0 0; background: #fff; font-size: 16px; }
+.sv-blk--faq .bge-ckeditor h3 + p { position: relative; margin-top: -12px; padding: 0 24px 22px 64px; border: 1px solid var(--sv-line); border-top: 0; border-radius: 0 0 4px 4px; background: #fff; color: var(--sv-text-2); }
+.sv-blk--faq .bge-ckeditor h3::before,
+.sv-blk--faq .bge-ckeditor h3 + p::before { content: "Q"; position: absolute; left: 24px; width: 24px; color: var(--sv-main-ink); font-family: var(--sv-font-en); font-size: 20px; font-weight: 700; line-height: 1.3; }
+.sv-blk--faq .bge-ckeditor h3::before { top: 20px; }
+.sv-blk--faq .bge-ckeditor h3 + p::before { content: "A"; top: 0; }
+/* JS で開閉式にしたとき（site.js が h3 の中にボタンを入れる） */
+.sv-blk--faq .bge-ckeditor h3.is-collapsed { border-bottom: 1px solid var(--sv-line); border-radius: 4px; }
+.sv-blk--faq .sv-faq__toggle { display: flex; align-items: center; gap: 16px; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.sv-blk--faq .sv-faq__toggle::after { content: ""; flex: none; width: 20px; height: 20px; margin-left: auto; background: currentColor; transition: transform .2s; -webkit-mask: var(--sv-ic-chevron) center / contain no-repeat; mask: var(--sv-ic-chevron) center / contain no-repeat; }
+.sv-blk--faq .sv-faq__toggle[aria-expanded="true"]::after { transform: rotate(180deg); }
+
+/* ---- CTA（sv-blk--cta）：背景色「ピンク」（サブの濃い色）と組み合わせる ---- */
+.bge-contents > .sv-blk--cta { padding-top: 88px; padding-bottom: 88px; text-align: center; }
+.sv-blk--cta .bge-ckeditor { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.sv-blk--cta .bge-ckeditor > * { margin: 0; }
+.sv-blk--cta .bge-ckeditor h2 { font-size: 32px; }
+.sv-blk--cta .bge-ckeditor h2 + p { max-width: 640px; color: color-mix(in srgb, currentColor 88%, transparent); }
+.sv-blk--cta .bge-ckeditor > p:last-child { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 8px; }
+.sv-blk--cta .bge-ckeditor > p:last-child a,
+.sv-blk--cta .bge-ckeditor > p:last-child a:hover { border-color: #fff; background: #fff; color: var(--sv-sub-ink); }
+.sv-blk--cta .bge-ckeditor > p:last-child a:hover { background: var(--sv-sub-100); border-color: var(--sv-sub-100); }
+.sv-blk--cta .bge-ckeditor > p:last-child a:nth-of-type(2) { border-color: currentColor; background: transparent; color: var(--sv-on-sub); }
+.sv-blk--cta .bge-ckeditor > p:last-child a:nth-of-type(2):hover { background: color-mix(in srgb, #fff 14%, transparent); }
+
+/* ---- レスポンシブ ---- */
+@media (max-width: 900px) {
+	.bge-contents > .sv-blk--hero { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+	.bge-contents > .sv-blk--logos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	.sv-blk--functions .bge-ckeditor ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.bge-contents > :is(.sv-blk--features, .sv-blk--plans, .sv-blk--cases) { grid-template-columns: minmax(0, 1fr); }
+	.sv-blk--steps .bge-ckeditor ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.sv-blk--plans .bge-ckeditor > h3:first-child { margin-top: 0; }
+}
+@media (max-width: 640px) {
+	.bge-contents { --sv-sec: 64px; }
+	.bge-contents .bge-title-h2,
+	.sv-blk--cta .bge-ckeditor h2 { font-size: 24px; }
+	.bge-contents > .sv-blk--section { padding-bottom: 32px; }
+	.bge-contents > .sv-blk--lead { padding-bottom: 32px; }
+	.bge-contents > .sv-blk--hero { padding-top: 48px; padding-bottom: 56px; }
+	.sv-blk--hero .bge-ckeditor h1 { font-size: 28px; }
+	.sv-blk--hero .bge-ckeditor > ul li { margin-right: 16px; padding-right: 16px; }
+	.bge-contents > .sv-blk--logos { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+	.sv-blk--functions .bge-ckeditor ul,
+	.sv-blk--steps .bge-ckeditor ol { grid-template-columns: minmax(0, 1fr); }
+	.bge-contents > .sv-blk--cta { padding-top: 64px; padding-bottom: 64px; }
+}
+
+/* ---- 動き（CSS のみ・控えめ。公開画面だけ） ---- */
+@keyframes sv-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.sv-body .bge-contents > [data-bgb]:not(.sv-blk--hero) { animation: sv-rise linear both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.bge-contents *, .bge-contents *::before, .bge-contents *::after { transition: none !important; animation: none !important; }
+}

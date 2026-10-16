@@ -1,0 +1,2 @@
+﻿id,description,thanks,unpublish,sender_1,sender_2,sender_name,subject_user,subject_admin,form_template,mail_template,redirect_url,auth_captcha,widget_area,ssl_on,save_info,publish_begin,publish_end,created,modified
+1,<p>以下の項目をご入力のうえ、「入力内容を確認する」を押してください。</p>,"<p>お問い合わせいただき、ありがとうございます。ご入力のメールアドレスに、受付の確認メールをお送りしました。担当者から2営業日以内にご連絡いたします。</p><p>確認メールが届かない場合は、お手数ですが info@example.com までご連絡ください。</p>",,,,サンプル株式会社,【サンプル予約】資料請求・無料相談を受け付けました,【サンプル予約】資料請求・無料相談のお申し込みがありました,default,mail_default,,,,,1,,,,

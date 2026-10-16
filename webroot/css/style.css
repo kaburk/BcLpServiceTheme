@@ -1,0 +1,318 @@
+@charset "UTF-8";
+/* ==========================================================================
+   BcLpServiceTheme : baserCMS5 サービス紹介 LP テーマ
+
+   サイト全体（ヘッダー・フッター・フォーム画面）と、公開画面だけに効かせる本文の見た目
+   - 接頭辞 sv-（BEM）
+   - 色はテーマ設定の4色（config.css の --theme-*）から作る。未保存のときは下記のフォールバック色
+   - 本文（BurgerEditor）の見た目は bge_style.css
+   - ブレークポイント: 640px / 900px（ヘッダーのナビ）
+   ========================================================================== */
+
+/* ---- Tokens（bge_style.css にも同じものがある。値を変えるときは両方） ---- */
+:root {
+	/* フォールバックの値は theme_configs.csv の初期値と同じにする */
+	--sv-main: var(--theme-main, #1f6feb);
+	--sv-sub: var(--theme-sub, #0b2545);
+	--sv-link: var(--theme-link, #1f6feb);
+	--sv-hover: var(--theme-hover, #154ab0);
+	--sv-main-50: color-mix(in srgb, var(--sv-main) 6%, #fff);
+	--sv-main-100: color-mix(in srgb, var(--sv-main) 12%, #fff);
+	--sv-main-200: color-mix(in srgb, var(--sv-main) 28%, #fff);
+	--sv-main-dark: color-mix(in srgb, var(--sv-main) 82%, #000);
+	--sv-sub-50: color-mix(in srgb, var(--sv-sub) 4%, #fff);
+	--sv-sub-100: color-mix(in srgb, var(--sv-sub) 10%, #fff);
+	--sv-line: color-mix(in srgb, var(--sv-sub) 16%, #fff);
+	/* 白地に載せる文字の色（下の @supports で、どの色でもコントラストを保つよう明るさを抑える） */
+	--sv-main-ink: color-mix(in srgb, var(--sv-main) 85%, #000);
+	--sv-sub-ink: var(--sv-sub);
+	--sv-link-ink: color-mix(in srgb, var(--sv-link) 85%, #000);
+	--sv-hover-ink: color-mix(in srgb, var(--sv-hover) 85%, #000);
+	/* メイン・サブの背景に載せる文字の色（背景の明るさで白／黒を切り替える） */
+	--sv-on-main: #fff;
+	--sv-on-sub: #fff;
+	--sv-text: #1f2937;
+	--sv-text-2: #4b5563;
+	--sv-field: #9ca3af;
+	--sv-font: "Roboto", "Noto Sans JP", system-ui, sans-serif;
+	--sv-font-head: "Noto Sans JP", system-ui, sans-serif;
+	--sv-font-en: "Roboto", "Noto Sans JP", sans-serif;
+	--sv-header-h: 72px;
+	--sv-width: 1120px;
+	--sv-gutter: 24px;
+}
+@supports (color: oklch(from red l c h)) {
+	:root {
+		--sv-main-ink: oklch(from var(--sv-main) min(l, 0.55) c h);
+		--sv-sub-ink: oklch(from var(--sv-sub) min(l, 0.40) c h);
+		--sv-link-ink: oklch(from var(--sv-link) min(l, 0.55) c h);
+		--sv-hover-ink: oklch(from var(--sv-hover) min(l, 0.45) c h);
+		--sv-on-main: oklch(from var(--sv-main) clamp(0, (0.65 - l) * 1000, 1) 0 0);
+		--sv-on-sub: oklch(from var(--sv-sub) clamp(0, (0.65 - l) * 1000, 1) 0 0);
+	}
+}
+@media (max-width: 640px) {
+	:root { --sv-gutter: 16px; }
+}
+
+/* ---- Base ---- */
+html { scroll-padding-top: var(--sv-header-h); -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+.sv-body { margin: 0; font-family: var(--sv-font); font-size: 16px; line-height: 1.8; color: var(--sv-text); background: #fff; }
+.sv-body *, .sv-body *::before, .sv-body *::after { box-sizing: border-box; }
+.sv-body a { color: var(--sv-link-ink); text-underline-offset: 3px; }
+.sv-body a:hover { color: var(--sv-hover-ink); }
+.sv-body img { max-width: 100%; height: auto; }
+.sv-body :focus-visible { outline: 3px solid color-mix(in srgb, var(--sv-main) 55%, #fff); outline-offset: 2px; }
+.sv-body [hidden] { display: none !important; }
+.sv-body :is(h1, h2, h3) { word-break: auto-phrase; }
+.sv-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sv-wrap { max-width: var(--sv-width); margin: 0 auto; padding: 0 var(--sv-gutter); }
+.sv-eyebrow { margin: 0; color: var(--sv-main-ink); font-family: var(--sv-font-en); font-size: 14px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+
+/* ---- Buttons ---- */
+.sv-btn,
+.sv-body a.sv-btn {
+	display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+	min-height: 52px; padding: 12px 28px; border: 2px solid var(--sv-main); border-radius: 4px;
+	background: var(--sv-main); color: var(--sv-on-main);
+	font: inherit; font-family: var(--sv-font-head); font-size: 16px; font-weight: 700; line-height: 1.4; text-align: center;
+	text-decoration: none; cursor: pointer; transition: background-color .2s, color .2s, border-color .2s;
+}
+.sv-btn:hover,
+.sv-body a.sv-btn:hover { border-color: var(--sv-main-dark); background: var(--sv-main-dark); color: var(--sv-on-main); }
+.sv-btn--line,
+.sv-body a.sv-btn--line { border-color: var(--sv-sub-ink); background: #fff; color: var(--sv-sub-ink); }
+.sv-btn--line:hover,
+.sv-body a.sv-btn--line:hover { border-color: var(--sv-sub-ink); background: var(--sv-sub-100); color: var(--sv-sub-ink); }
+.sv-btn--sm,
+.sv-body a.sv-btn--sm { min-height: 44px; padding: 8px 18px; font-size: 15px; }
+
+/* ---- Header ---- */
+.sv-header { position: sticky; top: 0; z-index: 20; background: #fff; border-bottom: 1px solid var(--sv-line); }
+.sv-header__inner { display: flex; align-items: center; gap: 32px; height: var(--sv-header-h); }
+.sv-header__logo,
+.sv-body .sv-header__logo { display: flex; align-items: center; flex: none; max-width: 240px; color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-size: 20px; font-weight: 700; line-height: 1.3; text-decoration: none; }
+.sv-header__logo img { display: block; max-height: 40px; width: auto; }
+.sv-nav { display: flex; align-items: center; margin-left: auto; }
+.sv-nav ul { display: flex; gap: 28px; margin: 0; padding: 0; list-style: none; }
+.sv-body .sv-nav a { padding: 8px 0; color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-weight: 500; text-decoration: none; }
+.sv-body .sv-nav a:hover { color: var(--sv-hover-ink); text-decoration: underline; }
+.sv-header__cta { flex: none; }
+.sv-header__inner > .sv-header__cta:nth-child(2) { margin-left: auto; }
+.sv-burger { display: none; align-items: center; justify-content: center; width: 48px; height: 48px; margin-left: auto; padding: 0; border: 1px solid var(--sv-line); border-radius: 4px; background: #fff; color: var(--sv-sub-ink); cursor: pointer; }
+.sv-burger svg { width: 24px; height: 24px; }
+.sv-burger .sv-burger__close { display: none; }
+.sv-burger[aria-expanded="true"] .sv-burger__open { display: none; }
+.sv-burger[aria-expanded="true"] .sv-burger__close { display: block; }
+.sv-drawer { padding: 8px var(--sv-gutter) 16px; border-top: 1px solid var(--sv-line); background: #fff; }
+.sv-drawer ul { margin: 0; padding: 0; list-style: none; }
+.sv-body .sv-drawer li a { display: block; padding: 14px 4px; border-bottom: 1px solid var(--sv-line); color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-weight: 500; text-decoration: none; }
+.sv-body .sv-drawer a.sv-btn { display: flex; width: 100%; margin-top: 12px; }
+.sv-back { margin-left: auto; font-weight: 500; white-space: nowrap; }
+@media (min-width: 901px) { .sv-drawer { display: none !important; } }
+@media (max-width: 900px) {
+	.sv-nav, .sv-header__cta { display: none !important; }
+	.sv-burger { display: inline-flex; }
+}
+@media (max-width: 640px) {
+	.sv-header__logo img { max-height: 32px; }
+}
+
+/* ---- Main ---- */
+.sv-main { display: block; }
+.sv-main > .sv-flash { max-width: var(--sv-width); margin: 16px auto; padding: 0 var(--sv-gutter); }
+
+/* ---- 本文：空の画像（公開画面のみ） ----
+   BurgerEditor の「選択画像を削除する」は data-bge-empty を "0" のまま img の src だけを空にする。
+   bge_style.css の「空の画像」の点線の枠は編集エリア用なので、公開画面ではグレーの枠（仮の写真）にする。 */
+.sv-body .bge-contents img[src=""] { display: none; }
+.sv-body .bge-contents .bgt-image:is([data-bge-empty="1"], :has(img[src=""])) {
+	display: block; min-height: 0; padding: 0; border: 1px dashed var(--sv-field); border-radius: 4px; background: #e5e7eb; aspect-ratio: 3 / 2;
+}
+.sv-body .bge-contents .bgt-image:is([data-bge-empty="1"], :has(img[src=""]))::before { content: none; }
+.sv-body .sv-blk--logos .bgt-image:is([data-bge-empty="1"], :has(img[src=""])) { aspect-ratio: auto; height: 64px; }
+.sv-body .sv-blk--cases .bgt-image:is([data-bge-empty="1"], :has(img[src=""])) { aspect-ratio: 16 / 10; border: 0; border-bottom: 1px solid var(--sv-line); border-radius: 0; }
+
+/* ---- 本文：ヒーローの画像が空のときの画面のイメージ（公開画面のみ） ----
+   bge_style.css に書くと編集エリアでも画像の欄が消え、画像を登録できなくなる。
+   窓の枠・サイドバー・カレンダーのます目を、1つの要素の背景（グラデーションの重ね合わせ）で描く。
+   位置と大きさは、枠の幅に対する割合（cqw）で決める（背景の位置の % は「枠 − 画像」に対する割合で扱いにくいため） */
+.sv-body .sv-blk--hero .bgt-grid--last:has([data-bge-empty="1"], img[src=""]) { container-type: inline-size; }
+.sv-body .sv-blk--hero .bgt-grid--last:has([data-bge-empty="1"], img[src=""]) > * { display: none; }
+.sv-body .sv-blk--hero .bgt-grid--last:has([data-bge-empty="1"], img[src=""])::before {
+	--bar: 34px;
+	--side: 22cqw;
+	--pad: 20px;
+	/* カレンダーの範囲（左上 x0・y0、1マスの幅 cw・高さ ch） */
+	--x0: calc(var(--side) + var(--pad));
+	--y0: calc(var(--bar) + 60px);
+	--cw: calc((100cqw - var(--side) - var(--pad) * 2) / 7);
+	--ch: calc((75cqw - var(--bar) - 60px - 84px) / 5);
+	content: ""; display: block; width: 100%; aspect-ratio: 4 / 3;
+	border: 1px solid var(--sv-line); border-radius: 6px;
+	box-shadow: 0 12px 32px color-mix(in srgb, var(--sv-sub) 10%, transparent);
+	background:
+		/* 窓の丸ボタン */
+		radial-gradient(circle 5px at 21px 17px, var(--sv-line) 98%, transparent 100%),
+		radial-gradient(circle 5px at 37px 17px, var(--sv-line) 98%, transparent 100%),
+		radial-gradient(circle 5px at 53px 17px, var(--sv-line) 98%, transparent 100%),
+		/* サイドバーのメニュー（1本だけメインの色） */
+		linear-gradient(color-mix(in srgb, #fff 70%, transparent), color-mix(in srgb, #fff 70%, transparent)) 14px calc(var(--bar) + 20px) / calc(var(--side) * .55) 10px,
+		linear-gradient(color-mix(in srgb, #fff 30%, transparent), color-mix(in srgb, #fff 30%, transparent)) 14px calc(var(--bar) + 44px) / calc(var(--side) - 28px) 8px,
+		linear-gradient(var(--sv-main), var(--sv-main)) 14px calc(var(--bar) + 64px) / calc(var(--side) - 28px) 8px,
+		linear-gradient(color-mix(in srgb, #fff 30%, transparent), color-mix(in srgb, #fff 30%, transparent)) 14px calc(var(--bar) + 84px) / calc(var(--side) - 28px) 8px,
+		linear-gradient(color-mix(in srgb, #fff 30%, transparent), color-mix(in srgb, #fff 30%, transparent)) 14px calc(var(--bar) + 104px) / calc((var(--side) - 28px) * .8) 8px,
+		/* 画面の見出しとボタン */
+		linear-gradient(var(--sv-sub-100), var(--sv-sub-100)) var(--x0) calc(var(--bar) + 20px) / calc((100cqw - var(--side)) * .4) 12px,
+		linear-gradient(var(--sv-main), var(--sv-main)) calc(100cqw - var(--pad) - 64px) calc(var(--bar) + 14px) / 64px 24px,
+		/* カレンダーのます目（色の付いたマス） */
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 3) calc(var(--y0) + var(--ch) * 0) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 4) calc(var(--y0) + var(--ch) * 0) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-sub-100), var(--sv-sub-100)) calc(var(--x0) + var(--cw) * 5) calc(var(--y0) + var(--ch) * 0) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-sub-100), var(--sv-sub-100)) calc(var(--x0) + var(--cw) * 6) calc(var(--y0) + var(--ch) * 0) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 2) calc(var(--y0) + var(--ch) * 1) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main), var(--sv-main)) calc(var(--x0) + var(--cw) * 3) calc(var(--y0) + var(--ch) * 1) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 4) calc(var(--y0) + var(--ch) * 1) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 5) calc(var(--y0) + var(--ch) * 1) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-sub-100), var(--sv-sub-100)) calc(var(--x0) + var(--cw) * 6) calc(var(--y0) + var(--ch) * 1) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 3) calc(var(--y0) + var(--ch) * 2) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main), var(--sv-main)) calc(var(--x0) + var(--cw) * 4) calc(var(--y0) + var(--ch) * 2) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 5) calc(var(--y0) + var(--ch) * 2) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-sub-100), var(--sv-sub-100)) calc(var(--x0) + var(--cw) * 6) calc(var(--y0) + var(--ch) * 2) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 1) calc(var(--y0) + var(--ch) * 3) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 3) calc(var(--y0) + var(--ch) * 3) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main), var(--sv-main)) calc(var(--x0) + var(--cw) * 4) calc(var(--y0) + var(--ch) * 3) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 5) calc(var(--y0) + var(--ch) * 3) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-sub-100), var(--sv-sub-100)) calc(var(--x0) + var(--cw) * 6) calc(var(--y0) + var(--ch) * 3) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-main-200), var(--sv-main-200)) calc(var(--x0) + var(--cw) * 2) calc(var(--y0) + var(--ch) * 4) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		linear-gradient(var(--sv-sub-100), var(--sv-sub-100)) calc(var(--x0) + var(--cw) * 6) calc(var(--y0) + var(--ch) * 4) / calc(var(--cw) - 6px) calc(var(--ch) - 6px),
+		/* カレンダーのます目（地の色のマス） */
+		repeating-linear-gradient(to right, var(--sv-sub-50) 0 calc(var(--cw) - 6px), transparent 0 var(--cw)) var(--x0) calc(var(--y0) + var(--ch) * 0) / calc(var(--cw) * 7) calc(var(--ch) - 6px),
+		repeating-linear-gradient(to right, var(--sv-sub-50) 0 calc(var(--cw) - 6px), transparent 0 var(--cw)) var(--x0) calc(var(--y0) + var(--ch) * 1) / calc(var(--cw) * 7) calc(var(--ch) - 6px),
+		repeating-linear-gradient(to right, var(--sv-sub-50) 0 calc(var(--cw) - 6px), transparent 0 var(--cw)) var(--x0) calc(var(--y0) + var(--ch) * 2) / calc(var(--cw) * 7) calc(var(--ch) - 6px),
+		repeating-linear-gradient(to right, var(--sv-sub-50) 0 calc(var(--cw) - 6px), transparent 0 var(--cw)) var(--x0) calc(var(--y0) + var(--ch) * 3) / calc(var(--cw) * 7) calc(var(--ch) - 6px),
+		repeating-linear-gradient(to right, var(--sv-sub-50) 0 calc(var(--cw) - 6px), transparent 0 var(--cw)) var(--x0) calc(var(--y0) + var(--ch) * 4) / calc(var(--cw) * 7) calc(var(--ch) - 6px),
+		/* 下の3つの枠 */
+		linear-gradient(var(--sv-main-50), var(--sv-main-50)) var(--x0) calc(75cqw - var(--pad) - 44px) / calc((var(--cw) * 7 - 26px) / 3) 44px,
+		linear-gradient(var(--sv-main-50), var(--sv-main-50)) calc(var(--x0) + (var(--cw) * 7 - 26px) / 3 + 10px) calc(75cqw - var(--pad) - 44px) / calc((var(--cw) * 7 - 26px) / 3) 44px,
+		linear-gradient(var(--sv-main-50), var(--sv-main-50)) calc(var(--x0) + ((var(--cw) * 7 - 26px) / 3 + 10px) * 2) calc(75cqw - var(--pad) - 44px) / calc((var(--cw) * 7 - 26px) / 3) 44px,
+		/* サイドバー・上の帯・地の色 */
+		linear-gradient(var(--sv-sub), var(--sv-sub)) 0 var(--bar) / var(--side) 100%,
+		linear-gradient(var(--sv-line), var(--sv-line)) 0 var(--bar) / 100% 1px,
+		linear-gradient(var(--sv-sub-50), var(--sv-sub-50)) 0 0 / 100% var(--bar),
+		#fff;
+	background-repeat: no-repeat;
+}
+
+/* ---- Footer ---- */
+.sv-footer { padding: 56px 0 32px; border-top: 1px solid var(--sv-line); background: #fff; color: var(--sv-text-2); }
+.sv-footer .bs-widget { margin: 0; }
+.sv-footer .bs-widget-text { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; }
+.sv-footer .bs-widget-head { margin: 0 0 4px; font-size: 16px; }
+.sv-footer p { margin: 0; }
+.sv-footer__info { display: flex; flex-direction: column; gap: 8px; }
+.sv-footer__name { color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-size: 18px; font-weight: 700; }
+.sv-footer ul { display: flex; flex-wrap: wrap; gap: 24px; align-self: flex-end; margin: 0; padding: 0; list-style: none; }
+.sv-footer__copy { display: block; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--sv-line); font-size: 14px; text-align: center; }
+
+/* ---- Form screens（BcMail） ---- */
+.sv-fsec { max-width: 820px; margin: 0 auto; padding: 56px var(--sv-gutter) 96px; }
+.sv-fhead { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; text-align: center; }
+.sv-fhead__title { margin: 0; color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-size: 30px; font-weight: 700; line-height: 1.45; }
+.sv-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 40px; padding: 0; list-style: none; }
+.sv-steps li { padding: 12px 8px; border: 1px solid var(--sv-line); border-radius: 4px; background: var(--sv-sub-50); color: var(--sv-text-2); font-family: var(--sv-font-head); font-weight: 500; text-align: center; }
+.sv-steps li.is-current { border-color: var(--sv-sub); background: var(--sv-sub); color: var(--sv-on-sub); }
+.sv-flead { margin: 0 0 24px; color: var(--sv-text-2); }
+.sv-flead > * { margin: 0; }
+.sv-flead > * + * { margin-top: 8px; }
+.sv-done { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 48px 32px; border: 1px solid var(--sv-line); border-radius: 4px; background: #fff; text-align: center; }
+.sv-done__icon { display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: var(--sv-main-100); color: var(--sv-sub-ink); }
+.sv-done__title { margin: 0; color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-size: 24px; font-weight: 700; }
+.sv-done__message { max-width: 560px; color: var(--sv-text-2); }
+.sv-done__message > * { margin: 0; }
+.sv-done__message > * + * { margin-top: 12px; }
+
+/* フォーム本体（bc-front の mail_form / mail_input の出力構造に当てる） */
+.sv-form .bs-mail-form-body { display: block; width: 100%; border: 1px solid var(--sv-line); border-radius: 4px; border-collapse: separate; background: #fff; }
+.sv-form .bs-mail-form-body tbody { display: block; }
+.sv-form .bs-mail-form-body tr { display: grid; grid-template-columns: 240px minmax(0, 1fr); border-bottom: 1px solid var(--sv-line); }
+.sv-form .bs-mail-form-body tr:last-child { border-bottom: 0; }
+.sv-form .bs-mail-form-body th,
+.sv-form .bs-mail-form-body td { display: block; width: auto; border: 0; text-align: left; }
+.sv-form .bs-mail-form-body th.col-head { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; padding: 20px 24px; background: var(--sv-sub-50); color: var(--sv-sub-ink); font-family: var(--sv-font-head); font-weight: 500; }
+.sv-form .bs-mail-form-body td.col-input { padding: 16px 24px; background: #fff; }
+.sv-form .col-head label { color: inherit; }
+.sv-form .required,
+.sv-form .normal { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 3px; font-size: 13px; font-weight: 700; line-height: 1; }
+.sv-form .required { background: var(--sv-sub); color: var(--sv-on-sub); }
+.sv-form .normal { border: 1px solid var(--sv-field); background: #fff; color: var(--sv-text-2); }
+.sv-form .col-input > span[id^="FieldMessage"] { display: flex; flex-direction: column; gap: 8px; }
+.sv-form .bs-mail-before-attachment:empty,
+.sv-form .bs-mail-after-attachment:empty,
+.sv-form .bs-mail-attention:empty,
+.sv-form .bs-mail-description:empty { display: none; }
+.sv-form .bs-mail-attention,
+.sv-form .bs-mail-description { color: var(--sv-text-2); font-size: 15px; }
+.sv-form input[type="text"],
+.sv-form input[type="email"],
+.sv-form input[type="tel"],
+.sv-form input[type="number"],
+.sv-form input[type="password"],
+.sv-form select,
+.sv-form textarea {
+	width: 100%; min-height: 48px; padding: 11px 14px;
+	border: 1px solid var(--sv-field); border-radius: 4px; background: #fff;
+	color: var(--sv-text); font: inherit; font-size: 16px;
+}
+.sv-form select { max-width: 320px; }
+.sv-form textarea { min-height: 140px; resize: vertical; }
+.sv-form ::placeholder { color: #6b7280; }
+.sv-form :is(input, select, textarea):focus-visible { outline: 3px solid color-mix(in srgb, var(--sv-main) 55%, #fff); outline-offset: 2px; }
+/* 姓・名のように class="form-s" の欄が並ぶ行は2列にする（姓・名はそれぞれ別の span#FieldMessage〇〇 に入る） */
+.sv-form .col-input:has(input.form-s) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.sv-form .col-input:has(input.form-s) > :not(span[id^="FieldMessage"]) { grid-column: 1 / -1; }
+.sv-form input.form-s { width: 100%; }
+/* ラジオ・チェックボックス：span#FieldMessage〇〇 の中に「span > input + label」で並ぶ */
+.sv-form span[id^="FieldMessage"]:has(> span > input[type="radio"]) { flex-direction: row; flex-wrap: wrap; gap: 8px 24px; }
+.sv-form span[id^="FieldMessage"]:has(> span > input[type="radio"]) > :not(:has(> input)) { flex-basis: 100%; }
+.sv-form .col-input span:has(> input[type="radio"]),
+.sv-form .col-input span:has(> input[type="checkbox"]) { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; }
+.sv-form input[type="radio"],
+.sv-form input[type="checkbox"] { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--sv-main); }
+.sv-form .col-input span:has(> input) label { cursor: pointer; }
+/* エラー */
+.sv-form .error-message { color: #b91c1c; font-size: 15px; font-weight: 500; }
+.sv-form .form-error { border-color: #b91c1c !important; background: #fef2f2 !important; }
+/* ボタン */
+.sv-form .bs-mail-form-submit { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
+.sv-form .bs-mail-form-submit .bs-button {
+	display: inline-flex; align-items: center; justify-content: center; min-width: 280px; min-height: 52px; padding: 12px 28px;
+	border: 2px solid var(--sv-main); border-radius: 4px; background: var(--sv-main); color: var(--sv-on-main);
+	font: inherit; font-family: var(--sv-font-head); font-size: 16px; font-weight: 700; cursor: pointer; transition: background-color .2s, border-color .2s;
+}
+.sv-form .bs-mail-form-submit .bs-button:hover { border-color: var(--sv-main-dark); background: var(--sv-main-dark); }
+.sv-form .bs-mail-form-submit #BtnMessageBack,
+.sv-form .bs-mail-form-submit input[type="reset"] { min-width: 200px; border-color: var(--sv-sub-ink); background: #fff; color: var(--sv-sub-ink); }
+.sv-form .bs-mail-form-submit #BtnMessageBack:hover { background: var(--sv-sub-100); }
+.sv-form.is-confirm .bs-mail-form-submit #BtnMessageSubmit { min-width: 200px; }
+/* 確認画面（freeze 時は値のテキストが出る） */
+.sv-form.is-confirm .bs-mail-form-body td.col-input { padding: 20px 24px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.sv-form.is-confirm .required,
+.sv-form.is-confirm .normal { display: none; }
+.sv-form.is-confirm .col-input:has(input.form-s) { display: block; }
+.sv-form.is-confirm .col-input:has(input.form-s) > span[id^="FieldMessage"] { display: inline; margin-right: .5em; }
+@media (max-width: 640px) {
+	.sv-fsec { padding: 40px var(--sv-gutter) 72px; }
+	.sv-steps li { padding: 10px 4px; font-size: 14px; }
+	.sv-form .bs-mail-form-body tr { grid-template-columns: minmax(0, 1fr); }
+	.sv-form .bs-mail-form-body th.col-head { padding: 14px 16px 4px; background: #fff; }
+	.sv-form .bs-mail-form-body td.col-input { padding: 4px 16px 16px; }
+	.sv-form .col-input:has(input.form-s) { grid-template-columns: minmax(0, 1fr); }
+	.sv-form .bs-mail-form-submit .bs-button { width: 100%; min-width: 0; }
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+	.sv-body *, .sv-body *::before, .sv-body *::after { transition: none !important; animation: none !important; }
+}
